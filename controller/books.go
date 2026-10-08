@@ -4,13 +4,14 @@ import (
 	"html/template"
 	"htmx-server/service"
 	"htmx-server/shared/constants"
+	"htmx-server/views"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
 )
 
-var tpl = template.Must(template.ParseGlob("views/books/*.html"))
+var tpl = template.Must(template.ParseFS(views.FS, "books/*.html"))
 
 func GetBooks(w http.ResponseWriter, r *http.Request) {
 	books := service.GetBooks()
