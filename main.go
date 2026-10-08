@@ -1,10 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"htmx-server/handler"
+	"log"
 	"net/http"
+	"os"
 	"sync"
 )
+
+var indexHTML []byte
 
 func main() {
 	mux := http.NewServeMux()
@@ -15,6 +20,9 @@ func main() {
 	wg.Wait()
 
 	handler.GetBooksRoutes(mux)
-
-	http.ListenAndServe(":8080", mux)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Fatal(http.ListenAndServe(":"+port, mux))
 }
