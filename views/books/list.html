@@ -1,0 +1,9 @@
+{{ define "booklist" }}
+    <ul>
+    {{ range . }}
+        {{ template "item" . }}
+    {{ else }}
+        <li>Nenhum livro</li>
+    {{ end }}
+    </ul>
+{{ end }}
