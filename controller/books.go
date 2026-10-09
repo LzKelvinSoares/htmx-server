@@ -3,15 +3,21 @@ package controller
 import (
 	"html/template"
 	"htmx-server/service"
+	"htmx-server/shared/components"
 	"htmx-server/shared/constants"
-	"htmx-server/views/books"
+	"htmx-server/shared/types"
+	"htmx-server/views"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
 )
 
-var tpl = template.Must(template.ParseFS(books.FS, "*.html"))
+var tpl = template.Must(
+	template.Must(
+		template.ParseFS(views.FS, "books/*.html"),
+	).ParseFS(components.FS, "*.html"),
+)
 
 func GetBooks(w http.ResponseWriter, r *http.Request) {
 	books := service.GetBooks()
@@ -39,8 +45,8 @@ func GetBookById(w http.ResponseWriter, r *http.Request) {
 	if book.Title == "" {
 		http.Error(w, "erro interno", http.StatusInternalServerError)
 	}
-
-	if err := tpl.ExecuteTemplate(w, "edit", book); err != nil {
+	data := types.FormData{ID: id, Title: book.Title, Author: book.Author, Editing: true}
+	if err := tpl.ExecuteTemplate(w, "edit", data); err != nil {
 		log.Println("erro no template:", err)
 		http.Error(w, "erro interno", http.StatusInternalServerError)
 	}

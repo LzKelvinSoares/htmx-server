@@ -1,25 +1,3 @@
- {{ define "edit" }}
-    <form
-        hx-put="/books/{{.ID}}"
-        hx-target="#book-{{.ID}}" 
-        hx-swap="outerHTML"
-    >
-        <input 
-            type="text"
-            name="title"
-            placeholder="Title"
-            required
-            value="{{.Title}}"
-        />
-        <input 
-            type="text"
-            name="author"
-            placeholder="Author"
-            required
-            value="{{.Author}}"
-        />
-        <button>
-            Add Book
-        </button>
-    </form>
+{{ define "edit" }}
+  {{ template "bookform" . }}
 {{ end }}

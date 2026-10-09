@@ -1,3 +1,5 @@
+<!-- views/index.html -->
+{{ define "index" }}
 <!DOCTYPE html>
   <html>
     <head>
@@ -30,29 +32,9 @@
 
         <div class="add-book-form">
           <h2>What do you want to read?</h2>
-          <form 
-            hx-post="/books"
-            hx-on::after-request="document.querySelector('form').reset()"
-            hx-target=".book-list ul" 
-            hx-swap="beforeend"
-          >
-            <input 
-                type="text"
-                name="title"
-                placeholder="Title"
-                required
-            />
-            <input 
-                type="text"
-                name="author"
-                placeholder="Author"
-                required
-            />
-            <button>
-                Add Book
-            </button>
-          </form>
+          {{ template "bookform" .Form }}
         </div>
       </main>
     </body>
   </html>
+{{ end }}

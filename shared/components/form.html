@@ -1,0 +1,39 @@
+{{ define "bookform" }}
+<form 
+    {{ if .Editing }}
+        hx-put="/books/{{ .ID }}"
+        hx-target="#book-{{ .ID }}"
+        hx-swap="outerHTML"
+    {{ else }}
+        hx-post="/books"
+        hx-target=".book-list ul"
+        hx-swap="beforeend"
+        hx-on::after-request="if(event.detail.successful) this.reset()"
+    {{ end }}
+    >
+    <input 
+        type="text"
+        name="title"
+        placeholder="Title"
+        required
+        value="{{.Title}}"
+    />
+    <input 
+        type="text"
+        name="author"
+        placeholder="Author"
+        required
+        value="{{.Author}}"
+    />
+     <button>
+        {{ if .Editing }}
+            Save
+        {{ else }}
+            Add Book
+        {{ end }}
+    </button>
+</form>
+{{ end }}
+{{ define "bookeditrow" }}
+    <li id="book-{{ .ID }}">{{ template "bookform" . }}</li>
+{{ end }}
