@@ -75,3 +75,10 @@ button {
   color: white;
   border: 0;
 }
+.htmx-indicator { 
+  display: none;
+  text-align: center;
+  padding: 12px;
+  padding-bottom: 0;
+}
+.htmx-request .htmx-indicator, .htmx-request.htmx-indicator { display: inline; }

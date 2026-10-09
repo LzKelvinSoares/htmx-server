@@ -26,7 +26,8 @@
             hx-target=".book-list"
           />
         </div>
-        <div class="book-list" hx-get="/books" hx-trigger="load">
+        <span id="spinner" class="htmx-indicator">Carregando...</span>
+        <div class="book-list" hx-get="/books" hx-trigger="load" hx-indicator="#spinner">
         </div>
 
         <div class="add-book-form">
