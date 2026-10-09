@@ -4,10 +4,9 @@ import (
 	"html/template"
 	"htmx-server/service"
 	"htmx-server/shared/components"
-	"htmx-server/shared/constants"
 	"htmx-server/shared/types"
+	"htmx-server/shared/utils"
 	"htmx-server/views"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -21,7 +20,7 @@ var tpl = template.Must(
 
 func GetBooks(w http.ResponseWriter, r *http.Request) {
 	books := service.GetBooks()
-	w.Header().Set("Content-Type", constants.CONTENT_TYPE["html"])
+	utils.GetHtmlHeader(w)
 	tpl.ExecuteTemplate(w, "booklist", books)
 }
 
@@ -29,66 +28,109 @@ func GetFilteredBooks(w http.ResponseWriter, r *http.Request) {
 	search := strings.TrimSpace(r.FormValue("search"))
 	books := service.FindBookByTitle(search)
 
-	w.Header().Set("Content-Type", constants.CONTENT_TYPE["html"])
+	utils.GetHtmlHeader(w)
 	tpl.ExecuteTemplate(w, "booklist", books)
 }
 
 func GetBookById(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
-		http.Error(w, "id inválido", http.StatusBadRequest)
+		errorParams := utils.GetErrorParams{
+			W:         w,
+			ErrorCode: http.StatusBadRequest,
+			Err:       err,
+			CustomMsg: "id inválido",
+		}
+		utils.GetError(errorParams)
 		return
 	}
 
 	book := service.FindBookById(id)
-	w.Header().Set("Content-Type", constants.CONTENT_TYPE["html"])
+	utils.GetHtmlHeader(w)
 	if book.Title == "" {
-		http.Error(w, "erro interno", http.StatusInternalServerError)
+		errorParams := utils.GetErrorParams{
+			W:         w,
+			ErrorCode: http.StatusBadRequest,
+			CustomMsg: "Título não encontrado",
+		}
+		utils.GetError(errorParams)
 	}
+
 	data := types.FormData{ID: id, Title: book.Title, Author: book.Author, Editing: true}
 	if err := tpl.ExecuteTemplate(w, "edit", data); err != nil {
-		log.Println("erro no template:", err)
-		http.Error(w, "erro interno", http.StatusInternalServerError)
+		errorParams := utils.GetErrorParams{
+			W:         w,
+			ErrorCode: http.StatusInternalServerError,
+			Err:       err,
+		}
+		utils.GetError(errorParams)
 	}
 }
 
 func PostBooks(w http.ResponseWriter, r *http.Request) {
 	book := service.AddBook(w, r)
 
-	w.Header().Set("Content-Type", constants.CONTENT_TYPE["html"])
+	utils.GetHtmlHeader(w)
 	if book.Title == "" {
-		http.Error(w, "erro interno", http.StatusInternalServerError)
+		errorParams := utils.GetErrorParams{
+			W:         w,
+			ErrorCode: http.StatusInternalServerError,
+		}
+		utils.GetError(errorParams)
 	}
 
 	if err := tpl.ExecuteTemplate(w, "item", book); err != nil {
-		log.Println("erro no template:", err)
-		http.Error(w, "erro interno", http.StatusInternalServerError)
+		errorParams := utils.GetErrorParams{
+			W:         w,
+			ErrorCode: http.StatusInternalServerError,
+			Err:       err,
+		}
+		utils.GetError(errorParams)
 	}
 }
 
 func PostBookById(w http.ResponseWriter, r *http.Request) {
 	book := service.AddBookById(w, r)
 
-	w.Header().Set("Content-Type", constants.CONTENT_TYPE["html"])
+	utils.GetHtmlHeader(w)
 	if book.Title == "" {
-		http.Error(w, "erro interno", http.StatusInternalServerError)
+		errorParams := utils.GetErrorParams{
+			W:         w,
+			ErrorCode: http.StatusInternalServerError,
+		}
+		utils.GetError(errorParams)
 	}
 
 	if err := tpl.ExecuteTemplate(w, "item", book); err != nil {
-		log.Println("erro no template:", err)
-		http.Error(w, "erro interno", http.StatusInternalServerError)
+		errorParams := utils.GetErrorParams{
+			W:         w,
+			ErrorCode: http.StatusInternalServerError,
+			Err:       err,
+		}
+		utils.GetError(errorParams)
 	}
 }
 
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
-		http.Error(w, "id inválido", http.StatusBadRequest)
+		errorParams := utils.GetErrorParams{
+			W:         w,
+			ErrorCode: http.StatusBadRequest,
+			Err:       err,
+			CustomMsg: "id inválido",
+		}
+		utils.GetError(errorParams)
 		return
 	}
 
 	if !service.DeleteBook(id) {
-		http.Error(w, "livro não encontrado", http.StatusNotFound)
+		errorParams := utils.GetErrorParams{
+			W:         w,
+			ErrorCode: http.StatusNotFound,
+			CustomMsg: "livro não encontrado",
+		}
+		utils.GetError(errorParams)
 		return
 	}
 

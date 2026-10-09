@@ -26,8 +26,7 @@
             hx-target=".book-list"
           />
         </div>
-        <div class="book-list">
-            <button hx-get="/books" hx-target=".book-list">Show Books</button>
+        <div class="book-list" hx-get="/books" hx-trigger="load">
         </div>
 
         <div class="add-book-form">
