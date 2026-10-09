@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"htmx-server/service"
 	"htmx-server/shared/components"
+	"htmx-server/shared/constants"
 	"htmx-server/shared/types"
 	"htmx-server/shared/utils"
 	"htmx-server/views"
@@ -20,16 +21,14 @@ var tpl = template.Must(
 
 func GetBooks(w http.ResponseWriter, r *http.Request) {
 	books := service.GetBooks()
-	utils.GetHtmlHeader(w)
-	tpl.ExecuteTemplate(w, "booklist", books)
+	utils.GetTemplate(w, tpl, constants.Booklist, books)
 }
 
 func GetFilteredBooks(w http.ResponseWriter, r *http.Request) {
 	search := strings.TrimSpace(r.FormValue("search"))
 	books := service.FindBookByTitle(search)
 
-	utils.GetHtmlHeader(w)
-	tpl.ExecuteTemplate(w, "booklist", books)
+	utils.GetTemplate(w, tpl, constants.Booklist, books)
 }
 
 func GetBookById(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +45,6 @@ func GetBookById(w http.ResponseWriter, r *http.Request) {
 	}
 
 	book := service.FindBookById(id)
-	utils.GetHtmlHeader(w)
 	if book.Title == "" {
 		errorParams := utils.GetErrorParams{
 			W:         w,
@@ -57,20 +55,12 @@ func GetBookById(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := types.FormData{ID: id, Title: book.Title, Author: book.Author, Editing: true}
-	if err := tpl.ExecuteTemplate(w, "edit", data); err != nil {
-		errorParams := utils.GetErrorParams{
-			W:         w,
-			ErrorCode: http.StatusInternalServerError,
-			Err:       err,
-		}
-		utils.GetError(errorParams)
-	}
+	utils.GetTemplate(w, tpl, constants.Edit, data)
 }
 
 func PostBooks(w http.ResponseWriter, r *http.Request) {
 	book := service.AddBook(w, r)
 
-	utils.GetHtmlHeader(w)
 	if book.Title == "" {
 		errorParams := utils.GetErrorParams{
 			W:         w,
@@ -79,20 +69,12 @@ func PostBooks(w http.ResponseWriter, r *http.Request) {
 		utils.GetError(errorParams)
 	}
 
-	if err := tpl.ExecuteTemplate(w, "item", book); err != nil {
-		errorParams := utils.GetErrorParams{
-			W:         w,
-			ErrorCode: http.StatusInternalServerError,
-			Err:       err,
-		}
-		utils.GetError(errorParams)
-	}
+	utils.GetTemplate(w, tpl, constants.Item, book)
 }
 
 func PostBookById(w http.ResponseWriter, r *http.Request) {
 	book := service.AddBookById(w, r)
 
-	utils.GetHtmlHeader(w)
 	if book.Title == "" {
 		errorParams := utils.GetErrorParams{
 			W:         w,
@@ -101,14 +83,7 @@ func PostBookById(w http.ResponseWriter, r *http.Request) {
 		utils.GetError(errorParams)
 	}
 
-	if err := tpl.ExecuteTemplate(w, "item", book); err != nil {
-		errorParams := utils.GetErrorParams{
-			W:         w,
-			ErrorCode: http.StatusInternalServerError,
-			Err:       err,
-		}
-		utils.GetError(errorParams)
-	}
+	utils.GetTemplate(w, tpl, constants.Item, book)
 }
 
 func DeleteBook(w http.ResponseWriter, r *http.Request) {

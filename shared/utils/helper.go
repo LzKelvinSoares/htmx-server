@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"html/template"
 	"htmx-server/shared/constants"
 	"log"
 	"net/http"
@@ -31,5 +32,17 @@ func GetError(params GetErrorParams) {
 	default:
 		http.Error(params.W, "erro interno", http.StatusInternalServerError)
 		return
+	}
+}
+
+func GetTemplate(w http.ResponseWriter, tpl *template.Template, templateName string, data any) {
+	GetHtmlHeader(w)
+	if err := tpl.ExecuteTemplate(w, templateName, data); err != nil {
+		params := GetErrorParams{
+			W:         w,
+			ErrorCode: http.StatusInternalServerError,
+			Err:       err,
+		}
+		GetError(params)
 	}
 }

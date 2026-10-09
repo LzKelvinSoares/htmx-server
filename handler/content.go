@@ -6,8 +6,8 @@ import (
 	"htmx-server/shared/components"
 	"htmx-server/shared/constants"
 	"htmx-server/shared/types"
+	"htmx-server/shared/utils"
 	"htmx-server/views"
-	"log"
 	"net/http"
 	"sync"
 )
@@ -22,10 +22,7 @@ func GetContent(mux *http.ServeMux, wg *sync.WaitGroup) {
 	defer wg.Done()
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		data := struct{ Form types.FormData }{} // Editing=false: modo criar
-		w.Header().Set("Content-Type", constants.CONTENT_TYPE["html"])
-		if err := tpl.ExecuteTemplate(w, "index", data); err != nil {
-			log.Println("erro no template:", err)
-		}
+		utils.GetTemplate(w, tpl, constants.Index, data)
 	})
 
 	mux.HandleFunc("GET /styles.css", func(w http.ResponseWriter, r *http.Request) {
