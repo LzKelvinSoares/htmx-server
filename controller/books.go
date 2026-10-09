@@ -38,7 +38,7 @@ func GetBookById(w http.ResponseWriter, r *http.Request) {
 			W:         w,
 			ErrorCode: http.StatusBadRequest,
 			Err:       err,
-			CustomMsg: "id inválido",
+			CustomMsg: constants.InvalidId,
 		}
 		utils.GetError(errorParams)
 		return
@@ -49,7 +49,7 @@ func GetBookById(w http.ResponseWriter, r *http.Request) {
 		errorParams := utils.GetErrorParams{
 			W:         w,
 			ErrorCode: http.StatusBadRequest,
-			CustomMsg: "Título não encontrado",
+			CustomMsg: constants.TitleNotFound,
 		}
 		utils.GetError(errorParams)
 	}
@@ -93,7 +93,7 @@ func DeleteBook(w http.ResponseWriter, r *http.Request) {
 			W:         w,
 			ErrorCode: http.StatusBadRequest,
 			Err:       err,
-			CustomMsg: "id inválido",
+			CustomMsg: constants.InvalidId,
 		}
 		utils.GetError(errorParams)
 		return
@@ -103,7 +103,7 @@ func DeleteBook(w http.ResponseWriter, r *http.Request) {
 		errorParams := utils.GetErrorParams{
 			W:         w,
 			ErrorCode: http.StatusNotFound,
-			CustomMsg: "livro não encontrado",
+			CustomMsg: constants.BookNotFound,
 		}
 		utils.GetError(errorParams)
 		return
